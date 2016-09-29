@@ -11,9 +11,21 @@ var detailsArray = new Array();
 // error handler
 function errorHandler(siteDown, message) {
 	
+	console.log(message);
+	
 	if (siteDown) {
-		console.error("http://shirts4mike.com could not be reached. The site may be down or there may be a problem with your internet connection");
+		console.error("http://shirts4mike.com could not be reached. The site or your internet connection may be down.");
 	}
+	
+	var date = new Date().toString();
+	var errorMessage = '[' + date + '] ' + message + '\n';
+	
+	fs.appendFile('scraper-error.log', errorMessage, function (error) {
+		if (error) {
+			throw error;
+			console.log('There was an error writting to scraper-error.log');
+		}
+	});
 }
 
 // get todays date
@@ -48,7 +60,7 @@ function scrapeDetails(thisUrl, body) {
 	var details = {
 		'Title': $(body).find('div.shirt-details h1').text().slice(4),
 		'Price': $(body).find('div.shirt-details span.price').text(),
-		'imageURL': $(body).find('div.shirt-picture img').attr('src'),
+		'ImageURL': $(body).find('div.shirt-picture img').attr('src'),
 		'URL': thisUrl,
 		'Time': new Date().toString()
 	}
