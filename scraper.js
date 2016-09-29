@@ -6,7 +6,7 @@ var request = require('request');
 var cheerio = require('cheerio');
 var csv = require('csv-stringify');
 
-var detailsArray = new Array();
+var detailsArray = [];
 
 // error handler
 function errorHandler(siteDown, message) {
@@ -58,7 +58,7 @@ function scrapeDetails(thisUrl, body) {
 		'ImageURL': $(body).find('div.shirt-picture img').attr('src'),
 		'URL': thisUrl,
 		'Time': new Date().toString()
-	}
+	};
 	
     detailsArray.push(details);
 }
