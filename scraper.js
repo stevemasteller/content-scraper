@@ -11,8 +11,6 @@ var detailsArray = new Array();
 // error handler
 function errorHandler(siteDown, message) {
 	
-	console.log(message);
-	
 	if (siteDown) {
 		console.error("http://shirts4mike.com could not be reached. The site or your internet connection may be down.");
 	}
@@ -21,10 +19,7 @@ function errorHandler(siteDown, message) {
 	var errorMessage = '[' + date + '] ' + message + '\n';
 	
 	fs.appendFile('scraper-error.log', errorMessage, function (error) {
-		if (error) {
-			throw error;
-			console.log('There was an error writting to scraper-error.log');
-		}
+		if (error) throw error;
 	});
 }
 
