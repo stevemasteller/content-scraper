@@ -36,7 +36,7 @@ function getDate() {
 
 // Check if directory exists, and create it if it doesn't
 function makeDirectory(directory, callback) {
-	fs.stat(directory, function(error, stats) {
+	fs.stat(directory, function(error) {
 		//check if error and the code is 'not exists'
 		if (error && error.code === 'ENOENT') {
 			//create the directory, call the callback
@@ -96,7 +96,7 @@ request({"uri": url}, function(error, response, body){
 							if (detailsArray.length === $('ul.products a').length) {
 								
 								// make a directory if it doesn't exist
-							    makeDirectory("./data/", function(error) {
+								makeDirectory("./data/", function(error) {
 									if (error) {
 										errorHandler(false, error.message);
 									} else {
@@ -112,7 +112,7 @@ request({"uri": url}, function(error, response, body){
 													if (error) {
 														errorHandler(false, error.message);
 													}
- 												});
+												});
 											}
 										});
 									}
