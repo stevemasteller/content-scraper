@@ -1,3 +1,4 @@
+(function(){
 "use strict";
 
 var fs = require('fs');
@@ -6,6 +7,14 @@ var cheerio = require('cheerio');
 var csv = require('csv-stringify');
 
 var detailsArray = new Array();
+
+// error handler
+function errorHandler(siteDown, message) {
+	
+	if (siteDown) {
+		console.error("http://shirts4mike.com could not be reached. The site may be down or there may be a problem with your internet connection");
+	}
+}
 
 // get todays date
 function getDate() {
@@ -37,11 +46,11 @@ function scrapeDetails(thisUrl, body) {
 	var $ = cheerio.load(body);
 	
 	var details = {
-		'title': $(body).find('div.shirt-details h1').text().slice(4),
-		'price': $(body).find('div.shirt-details span.price').text(),
-		'imageUrl': $(body).find('div.shirt-picture img').attr('src'),
-		'url': thisUrl,
-		'time': new Date().toString()
+		'Title': $(body).find('div.shirt-details h1').text().slice(4),
+		'Price': $(body).find('div.shirt-details span.price').text(),
+		'imageURL': $(body).find('div.shirt-picture img').attr('src'),
+		'URL': thisUrl,
+		'Time': new Date().toString()
 	}
 	
     detailsArray.push(details);
@@ -53,7 +62,7 @@ function scrapeDetails(thisUrl, body) {
 var url = "http://shirts4mike.com";
 request({"uri": url}, function(error, response, body){
 	if (error) {
-		console.error(error.message);
+		errorHandler(true, error.message);
 	} else {
 		var $ = cheerio.load(body);
 		
@@ -62,7 +71,7 @@ request({"uri": url}, function(error, response, body){
 		var thisUrl = url + "/" + href;
 		request({"uri": thisUrl}, function(error, response, body) {
 			if (error) {
-				console.error(error.message);
+				errorHandler(true, error.message);
 			} else {
 				var $ = cheerio.load(body);
 				
@@ -72,7 +81,7 @@ request({"uri": url}, function(error, response, body){
 					var thisUrl = url + "/" + href;
 					request({"uri": thisUrl}, function(error, response, body) {
 						if (error) {
-							console.error(error.message);
+							errorHandler(true, error.message);
 						} else {
 							
 							// scrape all details
@@ -82,19 +91,19 @@ request({"uri": url}, function(error, response, body){
 								// make a directory if it doesn't exist
 							    makeDirectory("./data/", function(error) {
 									if (error) {
-										console.error(error.message);
+										errorHandler(false, error.message);
 									} else {
 										
 									// convert detailsArray to a csv string
 									csv(detailsArray, {"header": true, "quoted": true}, function(error, csvString) {
 											if (error) {
-												console.error(error.message);
+												errorHandler(false, error.message);
 											} else {
 												
 												// write the csv string to a file.
 												fs.writeFile( './data/' + getDate() + '.csv', csvString, function(error) {
 													if (error) {
-														console.error(error.message);
+														errorHandler(false, error.message);
 													}
  												});
 											}
@@ -110,3 +119,4 @@ request({"uri": url}, function(error, response, body){
 	}
 }); 
 
+})();
