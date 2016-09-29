@@ -3,15 +3,39 @@
 var fs = require('fs');
 var request = require('request');
 var cheerio = require('cheerio');
+var csv = require('csv-stringify');
 
 var detailsArray = new Array();
 
+// get todays date
+function getDate() {
+	var date = new  Date();
+	
+	var year  = date.getFullYear();
+	var month = date.getMonth() + 1;
+	var day   = date.getDate();
+	
+	return year + '-' + month + '-' + day;
+}
+
+// get the current time
+function getDateTime() {
+	var date = new Date();
+	
+	var year  = date.getFullYear();
+	var month = date.getMonth() + 1;
+	var day   = date.getDate();
+	var hour  = date.getHours();
+	var min   = date.getMinutes();
+	var sec   = date.getSeconds();
+	
+	return year + ':' + month + ':' + day + ':' + hour + ':' + min + ':' + sec;
+}
 
 // Check if directory exists, and create it if it doesn't
 function makeDirectory(directory, callback) {
 	fs.stat(directory, function(error, stats) {
 		//check if error and the code is 'not exists'
-		console.log('errno = ' + error.code);
 		if (error && error.code === 'ENOENT') {
 			//create the directory, call the callback
 			fs.mkdir(directory, callback);
@@ -22,7 +46,6 @@ function makeDirectory(directory, callback) {
 	});
 }
 
-
 // Scrape the details
 function scrapeDetails(thisUrl, body) {
 	var $ = cheerio.load(body);
@@ -30,8 +53,9 @@ function scrapeDetails(thisUrl, body) {
 	var details = {
 		'price': $(body).find('div.shirt-details span.price').text(),
 		'title': $(body).find('div.shirt-details h1').text().slice(4),
+		'imageUrl': $(body).find('div.shirt-picture img').attr('src'),
 		'url': thisUrl,
-		'imageUrl': $(body).find('div.shirt-picture img').attr('src')
+		'time': getDateTime()
 	}
 	
     detailsArray.push(details);
@@ -74,7 +98,21 @@ request({"uri": url}, function(error, response, body){
 									if (error) {
 										console.error(error.message);
 									} else {
-										console.log(detailsArray);
+										
+										// convert detailsArray to a csv string
+										csv(detailsArray, function(error, csvString) {
+											if (error) {
+												console.error(error.message);
+											} else {
+												
+												// write the csv string to a file.
+												fs.writeFile( './data/' + getDate() + '.csv', csvString, function(error) {
+													if (error) {
+														console.error(error.message);
+													}
+ 												});
+											}
+										});
 									}
 								});
 							}
