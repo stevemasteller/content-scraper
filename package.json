@@ -4,7 +4,6 @@
   "description": "A simple content scraper",
   "main": "scraper.js",
   "dependencies": {
-    "q": "^1.4.1",
     "request": "^2.75.0",
     "cheerio": "^0.22.0"
   },
