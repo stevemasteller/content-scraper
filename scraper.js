@@ -18,20 +18,6 @@ function getDate() {
 	return year + '-' + month + '-' + day;
 }
 
-// get the current time
-function getDateTime() {
-	var date = new Date();
-	
-	var year  = date.getFullYear();
-	var month = date.getMonth() + 1;
-	var day   = date.getDate();
-	var hour  = date.getHours();
-	var min   = date.getMinutes();
-	var sec   = date.getSeconds();
-	
-	return year + ':' + month + ':' + day + ':' + hour + ':' + min + ':' + sec;
-}
-
 // Check if directory exists, and create it if it doesn't
 function makeDirectory(directory, callback) {
 	fs.stat(directory, function(error, stats) {
@@ -51,11 +37,11 @@ function scrapeDetails(thisUrl, body) {
 	var $ = cheerio.load(body);
 	
 	var details = {
-		'price': $(body).find('div.shirt-details span.price').text(),
 		'title': $(body).find('div.shirt-details h1').text().slice(4),
+		'price': $(body).find('div.shirt-details span.price').text(),
 		'imageUrl': $(body).find('div.shirt-picture img').attr('src'),
 		'url': thisUrl,
-		'time': getDateTime()
+		'time': new Date().toString()
 	}
 	
     detailsArray.push(details);
@@ -99,8 +85,8 @@ request({"uri": url}, function(error, response, body){
 										console.error(error.message);
 									} else {
 										
-										// convert detailsArray to a csv string
-										csv(detailsArray, function(error, csvString) {
+									// convert detailsArray to a csv string
+									csv(detailsArray, {"header": true, "quoted": true}, function(error, csvString) {
 											if (error) {
 												console.error(error.message);
 											} else {
