@@ -10,7 +10,6 @@
   },
   "devDependencies": {
     "eslint": "^3.6.1",
-    "eslint-config-google": "^0.6.0"
   },
   "scripts": {
     "lint": "eslint scraper.js",
