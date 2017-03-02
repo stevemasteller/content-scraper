@@ -5,4 +5,4 @@ Outputs a CSV file named ./data/YYYY-MM-DD.csv containing Title, Price, ImageURL
 
 Treehouse Full-Stack Techdegree project 6
 
-My work: node.js
+My work: node.js, ESLint
